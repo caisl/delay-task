@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.caisl.dt.common.dao.mapper.DelayTaskMapper" >
+    <resultMap id="BaseResultMap" type="com.caisl.dt.common.dataobject.DelayTaskDO" >
+        <id column="delay_task_id" property="delayTaskId" jdbcType="BIGINT" />
+        <result column="sharding_id" property="shardingId" jdbcType="TINYINT" />
+        <result column="topic" property="topic" jdbcType="VARCHAR" />
+        <result column="tag" property="tag" jdbcType="VARCHAR" />
+        <result column="params" property="params" jdbcType="VARCHAR" />
+        <result column="trigger_time" property="triggerTime" jdbcType="BIGINT" />
+        <result column="status" property="status" jdbcType="TINYINT" />
+        <result column="extend_field" property="extendField" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="BIGINT" />
+        <result column="op_time" property="opTime" jdbcType="BIGINT" />
+        <result column="last_ver" property="lastVer" jdbcType="INTEGER" />
+        <result column="is_valid" property="isValid" jdbcType="TINYINT" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        delay_task_id, sharding_id, topic, tag, params, trigger_time, status, extend_field,
+        create_time, op_time, last_ver, is_valid
+    </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select
+        <include refid="Base_Column_List" />
+        from delay_task
+        where delay_task_id = #{delayTaskId,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+        delete from delay_task
+        where delay_task_id = #{delayTaskId,jdbcType=VARCHAR}
+    </delete>
+    <insert id="insert" parameterType="com.caisl.dt.common.dataobject.DelayTaskDO" >
+        insert into delay_task (delay_task_id, sharding_id, topic,
+        tag, params, trigger_time,
+        status, extend_field, create_time,
+        op_time, last_ver, is_valid
+        )
+        values (#{delayTaskId,jdbcType=VARCHAR}, #{shardingId,jdbcType=TINYINT}, #{topic,jdbcType=VARCHAR},
+        #{tag,jdbcType=VARCHAR}, #{params,jdbcType=VARCHAR}, #{triggerTime,jdbcType=BIGINT},
+        #{status,jdbcType=TINYINT}, #{extendField,jdbcType=VARCHAR}, #{createTime,jdbcType=BIGINT},
+        #{opTime,jdbcType=BIGINT}, #{lastVer,jdbcType=INTEGER}, #{isValid,jdbcType=TINYINT}
+        )
+    </insert>
+    <insert id="insertSelective" parameterType="com.caisl.dt.common.dataobject.DelayTaskDO" >
+        insert into delay_task
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="delayTaskId != null" >
+                delay_task_id,
+            </if>
+            <if test="shardingId != null" >
+                sharding_id,
+            </if>
+            <if test="topic != null" >
+                topic,
+            </if>
+            <if test="tag != null" >
+                tag,
+            </if>
+            <if test="params != null" >
+                params,
+            </if>
+            <if test="triggerTime != null" >
+                trigger_time,
+            </if>
+            <if test="status != null" >
+                status,
+            </if>
+            <if test="extendField != null" >
+                extend_field,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="opTime != null" >
+                op_time,
+            </if>
+            <if test="lastVer != null" >
+                last_ver,
+            </if>
+            <if test="isValid != null" >
+                is_valid,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="delayTaskId != null" >
+                #{delayTaskId,jdbcType=VARCHAR},
+            </if>
+            <if test="shardingId != null" >
+                #{shardingId,jdbcType=TINYINT},
+            </if>
+            <if test="topic != null" >
+                #{topic,jdbcType=VARCHAR},
+            </if>
+            <if test="tag != null" >
+                #{tag,jdbcType=VARCHAR},
+            </if>
+            <if test="params != null" >
+                #{params,jdbcType=VARCHAR},
+            </if>
+            <if test="triggerTime != null" >
+                #{triggerTime,jdbcType=BIGINT},
+            </if>
+            <if test="status != null" >
+                #{status,jdbcType=TINYINT},
+            </if>
+            <if test="extendField != null" >
+                #{extendField,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=BIGINT},
+            </if>
+            <if test="opTime != null" >
+                #{opTime,jdbcType=BIGINT},
+            </if>
+            <if test="lastVer != null" >
+                #{lastVer,jdbcType=INTEGER},
+            </if>
+            <if test="isValid != null" >
+                #{isValid,jdbcType=TINYINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.caisl.dt.common.dataobject.DelayTaskDO" >
+        update delay_task
+        <set >
+            <if test="shardingId != null" >
+                sharding_id = #{shardingId,jdbcType=TINYINT},
+            </if>
+            <if test="topic != null" >
+                topic = #{topic,jdbcType=VARCHAR},
+            </if>
+            <if test="tag != null" >
+                tag = #{tag,jdbcType=VARCHAR},
+            </if>
+            <if test="params != null" >
+                params = #{params,jdbcType=VARCHAR},
+            </if>
+            <if test="triggerTime != null" >
+                trigger_time = #{triggerTime,jdbcType=BIGINT},
+            </if>
+            <if test="status != null" >
+                status = #{status,jdbcType=TINYINT},
+            </if>
+            <if test="extendField != null" >
+                extend_field = #{extendField,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=BIGINT},
+            </if>
+            <if test="opTime != null" >
+                op_time = #{opTime,jdbcType=BIGINT},
+            </if>
+            <if test="lastVer != null" >
+                last_ver = #{lastVer,jdbcType=INTEGER},
+            </if>
+            <if test="isValid != null" >
+                is_valid = #{isValid,jdbcType=TINYINT},
+            </if>
+        </set>
+        where delay_task_id = #{delayTaskId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.caisl.dt.common.dataobject.DelayTaskDO" >
+        update delay_task
+        set sharding_id = #{shardingId,jdbcType=TINYINT},
+        topic = #{topic,jdbcType=VARCHAR},
+        tag = #{tag,jdbcType=VARCHAR},
+        params = #{params,jdbcType=VARCHAR},
+        trigger_time = #{triggerTime,jdbcType=BIGINT},
+        status = #{status,jdbcType=TINYINT},
+        extend_field = #{extendField,jdbcType=VARCHAR},
+        create_time = #{createTime,jdbcType=BIGINT},
+        op_time = #{opTime,jdbcType=BIGINT},
+        last_ver = #{lastVer,jdbcType=INTEGER},
+        is_valid = #{isValid,jdbcType=TINYINT}
+        where delay_task_id = #{delayTaskId,jdbcType=VARCHAR}
+    </update>
+</mapper>

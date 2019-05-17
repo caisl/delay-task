@@ -1,5 +1,6 @@
 package com.caisl.dt.domain;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.concurrent.Delayed;
@@ -12,8 +13,15 @@ import java.util.concurrent.TimeUnit;
  * @since 2019-05-09
  */
 @Data
+@Builder
 public class DelayTaskMessage implements Delayed {
+    /**
+     * 任务ID
+     */
     private Long delayTaskId;
+    /**
+     * 触发时间
+     */
     private Long triggerTime;
 
     @Override
@@ -24,6 +32,6 @@ public class DelayTaskMessage implements Delayed {
     @Override
     public int compareTo(Delayed o) {
         DelayTaskMessage delayTaskMessage = (DelayTaskMessage) o;
-        return delayTaskId < delayTaskMessage.getDelayTaskId() ? 1 : -1;
+        return delayTaskId < delayTaskMessage.getDelayTaskId() ? -1 : 1;
     }
 }

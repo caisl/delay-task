@@ -15,8 +15,9 @@
     <version>1.0-SNAPSHOT</version>
     <properties>
         <curator.version>2.10.0</curator.version>
-        <mybatis-version>1.2.0</mybatis-version>
-
+        <mybatis-version>2.0.1</mybatis-version>
+        <evosuiteVersion>1.0.6</evosuiteVersion>
+        <testng.version>6.7</testng.version>
     </properties>
     <dependencies>
         <!-- Spring-boot 依赖 -->
@@ -55,6 +56,13 @@
             <version>2.1.5</version>
         </dependency>
 
+        <!-- 使用springframework自定义命名空间时引入 -->
+        <dependency>
+            <groupId>com.dangdang</groupId>
+            <artifactId>elastic-job-lite-lifecycle</artifactId>
+            <version>2.1.5</version>
+        </dependency>
+
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
@@ -78,14 +86,39 @@
 
         <!-- convert -->
         <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>toolkit.common</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.alibaba.toolkit</groupId>
             <artifactId>toolkit-common-convert</artifactId>
             <version>1.0</version>
         </dependency>
 
+        <!-- junit -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.evosuite</groupId>
+            <artifactId>evosuite-standalone-runtime</artifactId>
+            <version>${evosuiteVersion}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>${testng.version}</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
-
 
     <build>
         <plugins>
@@ -103,6 +136,19 @@
                 </configuration>
             </plugin>
 
+            <plugin>
+                <groupId>org.evosuite.plugins</groupId>
+                <artifactId>evosuite-maven-plugin</artifactId>
+                <version>${evosuiteVersion}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare</goal>
+                        </goals>
+                        <phase>process-test-classes</phase>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>

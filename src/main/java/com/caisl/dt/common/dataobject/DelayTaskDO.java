@@ -39,7 +39,7 @@ public class DelayTaskDO extends BaseDO {
     private String params;
 
     /**
-     * 任务触发事件
+     * 任务触发时间
      */
     private Long triggerTime;
 

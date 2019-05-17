@@ -19,4 +19,9 @@ public class DelayTaskLoggerFactory {
      * 业务日志
      */
     public final static Logger BUSINESS = LoggerFactory.getLogger("BUSINESS");
+
+    /**
+     * 消息日志
+     */
+    public final static Logger MQ = LoggerFactory.getLogger("MQ");
 }

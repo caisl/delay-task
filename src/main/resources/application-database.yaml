@@ -5,9 +5,9 @@ mybatis:
 
 spring:
     datasource:
-        name: presell-market
+        name: delay-task
         driverClassName: com.mysql.jdbc.Driver
-        url: jdbc:mysql://127.0.0.1:3306/activity_platform?useUnicode=true&amp;characterEncoding=utf-8&amp;zeroDateTimeBehavior=convertToNull&amp;autoReconnect=true
+        url: jdbc:mysql://127.0.0.1:3306/activity_platform?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&serverTimezone=UTC
         username: root
         password: root
 

@@ -2,9 +2,13 @@ package com.caisl.dt.service;
 
 import com.alibaba.common.convert.Convert;
 import com.caisl.dt.common.constant.DelayTaskStatusEnum;
+import com.caisl.dt.common.dao.DelayTaskDAO;
 import com.caisl.dt.common.dataobject.DelayTaskDO;
 import com.caisl.dt.domain.AddDelayTaskDTO;
+import com.caisl.dt.domain.DelayTaskMessage;
 import com.caisl.dt.domain.Result;
+import com.caisl.dt.common.constant.ResultCodeEnum;
+import com.caisl.dt.internal.queue.DelayTaskQueue;
 import com.caisl.dt.internal.sharding.ShardingIdSelector;
 import com.caisl.dt.system.util.ResultUtil;
 import com.caisl.dt.system.util.UniqueIdUtil;
@@ -23,8 +27,12 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class DelayTaskService implements IDelayTaskService {
 
+    private DelayTaskQueue delayTaskQueue = DelayTaskQueue.INSTANCE;
     @Resource
-    ShardingIdSelector randomSelector;
+    private ShardingIdSelector randomSelector;
+
+    @Resource
+    private DelayTaskDAO delayTaskDAO;
 
     @Override
     public Result<Long> addTask(AddDelayTaskDTO addDelayTaskDTO) {
@@ -33,14 +41,17 @@ public class DelayTaskService implements IDelayTaskService {
         DelayTaskDO delayTaskDO;
         //2.任务触发时间是否大于调度任务启动间隔时间
         if (addDelayTaskDTO.getTimeUnit().toMinutes(addDelayTaskDTO.getDelayTime()) <= 5) {
-            //TODO 直接调度到队列中，任务状态为LOAD
+            //直接调度到队列中，任务状态为LOAD
             delayTaskDO = buildDelayTaskDO(addDelayTaskDTO, DelayTaskStatusEnum.LOAD);
+            delayTaskQueue.add(buildDelayTaskMessage(delayTaskDO));
         } else {
-            //放入到DB，任务状态为INIT
+            //任务状态为INIT
             delayTaskDO = buildDelayTaskDO(addDelayTaskDTO, DelayTaskStatusEnum.INIT);
-
         }
-
+        //3.任务持久化
+        if (delayTaskDAO.insert(delayTaskDO) <= 0) {
+            return ResultUtil.failResult(ResultCodeEnum.INSERT_TASK_FAIL);
+        }
 
         return ResultUtil.successResult(delayTaskDO.getDelayTaskId());
     }
@@ -51,9 +62,28 @@ public class DelayTaskService implements IDelayTaskService {
     }
 
 
+    /**
+     * buildDelayTaskMessage
+     *
+     * @param delayTaskDO
+     * @return
+     */
+    private DelayTaskMessage buildDelayTaskMessage(DelayTaskDO delayTaskDO) {
+        return DelayTaskMessage.builder().delayTaskId(delayTaskDO.getDelayTaskId()).triggerTime
+                (delayTaskDO.getTriggerTime()).build();
+    }
+
+    /**
+     * buildDelayTaskDO
+     *
+     * @param addDelayTaskDTO
+     * @param statusEnum
+     * @return
+     */
     private DelayTaskDO buildDelayTaskDO(AddDelayTaskDTO addDelayTaskDTO, DelayTaskStatusEnum statusEnum) {
         DelayTaskDO delayTaskDO = DelayTaskDO.builder()
                 .delayTaskId(UniqueIdUtil.nextId())
+                .triggerTime(getTriggerTimeMillis(addDelayTaskDTO.getDelayTime(), addDelayTaskDTO.getTimeUnit()))
                 .extendField(StringUtils.EMPTY)
                 .params(addDelayTaskDTO.getParamJson())
                 .status(statusEnum.getCode())
@@ -63,6 +93,11 @@ public class DelayTaskService implements IDelayTaskService {
         return delayTaskDO;
     }
 
+    /**
+     * calculate shardingId
+     *
+     * @return
+     */
     private Integer getShardingId() {
         return Convert.asInt(randomSelector.select());
     }

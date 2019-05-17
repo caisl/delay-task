@@ -2,6 +2,7 @@ package com.caisl.dt.system.util;
 
 
 import com.caisl.dt.domain.Result;
+import com.caisl.dt.common.constant.ResultCodeEnum;
 
 /**
  * ResultUtil
@@ -16,6 +17,13 @@ public class ResultUtil {
         return new Result();
     }
 
+
+    public static Result defaultFailResult() {
+        Result result = defaultResult();
+        result.setSuccess(Boolean.FALSE);
+        return result;
+    }
+
     public static Result successResult(Object model) {
         Result result = defaultResult();
         result.setModel(model);
@@ -24,12 +32,19 @@ public class ResultUtil {
     }
 
     public static Result failResult(String errorCode, String errorMessage) {
-        Result result = defaultResult();
-        result.setSuccess(Boolean.FALSE);
+        Result result = defaultFailResult();
         result.setResultCode(errorCode);
         result.setMessage(errorMessage);
         return result;
     }
+
+    public static Result failResult(ResultCodeEnum codeEnum) {
+        Result result = defaultFailResult();
+        result.setResultCode(codeEnum.getCode());
+        result.setMessage(codeEnum.getMessage());
+        return result;
+    }
+
 
     public static boolean isResultSuccess(Result result) {
         return null != result && result.isSuccess();

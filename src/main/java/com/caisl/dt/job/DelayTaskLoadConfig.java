@@ -23,27 +23,31 @@ public class DelayTaskLoadConfig {
     @Resource
     private ZookeeperRegistryCenter registryCenter;
 
-    @Value("${demo.demoJob.name}")
-    private String demoJobName;
+    public String getDelayTaskLoadJobName() {
+        return delayTaskLoadJobName;
+    }
 
-    @Value("${demo.demoJob.cron}")
-    private String demoJobCron;
+    @Value("${delayTaskLoadJob.name}")
+    private String delayTaskLoadJobName;
 
-    @Value("${demo.demoJob.shardingTotalCount}")
-    private int demoJobShardingTotalCount;
+    @Value("${delayTaskLoadJob.cron}")
+    private String delayTaskLoadJobCron;
 
-    @Value("${demo.demoJob.shardingItemParameters}")
+    @Value("${delayTaskLoadJob.shardingTotalCount}")
+    private int delayTaskLoadJobShardingTotalCount;
+
+    @Value("${delayTaskLoadJob.shardingItemParameters}")
     private String shardingItemParameters;
 
     @Bean(initMethod = "init")
-    public JobScheduler demoJobScheduler(final DelayTaskLoadJob delayTaskLoadJob) {
+    public JobScheduler delayTaskLoadJobScheduler(final DelayTaskLoadJob delayTaskLoadJob) {
         return new SpringJobScheduler(delayTaskLoadJob, registryCenter, liteJobConfiguration());
     }
 
     private LiteJobConfiguration liteJobConfiguration() {
         return LiteJobConfiguration.newBuilder(
                 new SimpleJobConfiguration(
-                        JobCoreConfiguration.newBuilder(demoJobName, demoJobCron, demoJobShardingTotalCount)
+                        JobCoreConfiguration.newBuilder(delayTaskLoadJobName, delayTaskLoadJobCron, delayTaskLoadJobShardingTotalCount)
                                 .shardingItemParameters(shardingItemParameters).build()
                         , DelayTaskLoadJob.class.getCanonicalName()
                 )).overwrite(true).build();

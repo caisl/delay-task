@@ -25,6 +25,24 @@
         from delay_task
         where delay_task_id = #{delayTaskId,jdbcType=VARCHAR}
     </select>
+    <select id="queryListByQuery" resultMap="BaseResultMap"
+            parameterType="com.caisl.dt.common.query.DelayTaskQuery">
+        select
+        <include refid="Base_Column_List"/>
+        from delay_task
+        where trigger_time <![CDATA[ < ]]> #{triggerTime,jdbcType=BIGINT}
+        AND trigger_time <![CDATA[ > ]]> #{compensateTime,jdbcType=BIGINT}
+        AND sharding_id IN
+        <foreach collection="shardingIds" index="index" item="item"
+                 separator="," open="(" close=")">
+            #{item,jdbcType=TINYINT}
+        </foreach>
+        AND status = 1
+        AND is_valid = 1
+        AND delay_task_id >= #{beginId,jdbcType=BIGINT}
+        limit #{pageSize}
+    </select>
+
     <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
         delete from delay_task
         where delay_task_id = #{delayTaskId,jdbcType=VARCHAR}

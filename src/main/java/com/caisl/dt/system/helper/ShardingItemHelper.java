@@ -2,13 +2,15 @@ package com.caisl.dt.system.helper;
 
 import com.caisl.dt.job.DelayTaskLoadConfig;
 import com.dangdang.ddframe.job.exception.JobConfigurationException;
+import com.dangdang.ddframe.job.lite.internal.sharding.ShardingService;
+import com.dangdang.ddframe.job.reg.zookeeper.ZookeeperRegistryCenter;
+import com.dangdang.ddframe.job.util.config.ShardingItemParameters;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * ShardingItemHelper
@@ -23,15 +25,44 @@ public class ShardingItemHelper {
     private static final String KEY_VALUE_DELIMITER = "=";
 
     @Resource
-    DelayTaskLoadConfig delayTaskLoadConfig;
+    private ZookeeperRegistryCenter regCenter;
+
+    @Resource
+    private DelayTaskLoadConfig delayTaskLoadConfig;
+
+
+    private final ShardingService shardingService = new ShardingService(regCenter, delayTaskLoadConfig.getDelayTaskLoadJobName());
+
 
     /**
      * 获取分片ID集合
      *
+     * @param isLocalNode
      * @return
      */
-    public List<Integer> getShardingIds() {
-        String originalShardingItemParameters = delayTaskLoadConfig.getShardingItemParameters();
+    public List<Integer> getShardingIds(boolean isLocalNode) {
+        if (isLocalNode) {
+            return getLocalShardingIds();
+        }
+        return getJobShardingIds();
+    }
+
+    /**
+     * 获取当前节点作业实例的分片ID集合
+     *
+     * @return
+     */
+    public List<Integer> getLocalShardingIds() {
+        return shardingService.getLocalShardingItems();
+    }
+
+    /**
+     * 获取当前作业设置的分片ID集合
+     *
+     * @return
+     */
+    public List<Integer> getJobShardingIds() {
+      /*  String originalShardingItemParameters = delayTaskLoadConfig.getShardingItemParameters();
         if (StringUtils.isBlank(originalShardingItemParameters)) {
             return Collections.EMPTY_LIST;
         }
@@ -41,7 +72,10 @@ public class ShardingItemHelper {
         for (String each : shardingItemParameters) {
             shardingIds.add(parse(each, originalShardingItemParameters));
         }
-        return shardingIds;
+        return shardingIds;*/
+        Map<Integer, String> shardingItemParameterMap = new ShardingItemParameters(delayTaskLoadConfig.getShardingItemParameters()).getMap();
+        return Lists.newArrayList(shardingItemParameterMap.keySet());
+
     }
 
     /**

@@ -23,9 +23,12 @@ public interface DelayTaskMapper {
 
     int insertSelective(DelayTaskDO record);
 
-    DelayTaskDO selectByPrimaryKey(String delayTaskId);
+    DelayTaskDO selectByPrimaryKey(Long delayTaskId);
 
     int updateByPrimaryKeySelective(DelayTaskDO record);
 
     int updateByPrimaryKey(DelayTaskDO record);
+
+    int updateStatus(DelayTaskDO record);
+
 }

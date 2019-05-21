@@ -2,11 +2,13 @@ package com.caisl.dt.internal.handler;
 
 import ch.qos.logback.classic.Level;
 import com.caisl.dt.common.constant.DelayTaskConstant;
+import com.caisl.dt.common.constant.DelayTaskStatusEnum;
 import com.caisl.dt.common.dao.DelayTaskDAO;
 import com.caisl.dt.common.dataobject.DelayTaskDO;
 import com.caisl.dt.common.query.DelayTaskQuery;
 import com.caisl.dt.domain.DelayTaskMessage;
 import com.caisl.dt.internal.queue.DelayTaskQueue;
+import com.caisl.dt.mq.producer.DelayTaskMessageProducer;
 import com.caisl.dt.system.helper.ShardingItemHelper;
 import com.caisl.dt.system.logger.DelayTaskLoggerFactory;
 import com.caisl.dt.system.logger.DelayTaskLoggerMarker;
@@ -41,6 +43,8 @@ public class DelayTaskHandler implements IDelayTaskHandler {
     private ShardingItemHelper shardingItemHelper;
     @Resource
     private DelayTaskDAO delayTaskDAO;
+    @Resource
+    private DelayTaskMessageProducer delayTaskMessageProducer;
 
     @Override
     public boolean loadTask() {
@@ -52,6 +56,7 @@ public class DelayTaskHandler implements IDelayTaskHandler {
             LogUtil.log(DelayTaskLoggerFactory.BUSINESS, DelayTaskLoggerMarker.JOB, Level.INFO, "开始执行第" + curLoopIndex + "次扫描");
             try {
                 DelayTaskQuery delayTaskQuery = buildDelayTaskQuery(beginId);
+                //扫描 now - 任务补偿时间（2分钟 ）<= 触发时间 <= now + 任务扫描间隔时间（5分钟）
                 List<DelayTaskDO> delayTaskDOS = delayTaskDAO.queryListByQuery(delayTaskQuery);
                 if (CollectionUtils.isEmpty(delayTaskDOS)) {
                     break;
@@ -64,15 +69,36 @@ public class DelayTaskHandler implements IDelayTaskHandler {
                     }
                     delayTaskQueue.add(DelayTaskMessage.builder().delayTaskId(delayTaskDO.getDelayTaskId()).triggerTime(delayTaskDO.getTriggerTime()).build());
                 }
+                //更新状态
+
             } catch (Exception e) {
-                //todo logger
+                LogUtil.log(DelayTaskLoggerFactory.BUSINESS, DelayTaskLoggerMarker.JOB, Level.ERROR, "loadTask error", e);
             } finally {
                 curLoopIndex++;
-
             }
         }
 
         return true;
+    }
+
+    @Override
+    public boolean dealTask(DelayTaskMessage delayTaskMessage) {
+        //1.查询数据库中是否存在该任务
+        DelayTaskDO delayTaskDO = delayTaskDAO.selectByPrimaryKey(delayTaskMessage.getDelayTaskId());
+        if(delayTaskDO == null){
+            return false;
+        }
+        //2.检验任务状态
+        if(delayTaskDO.getStatus() != DelayTaskStatusEnum.INIT.getCode()){
+            return true;
+        }
+        //3.发送MQ消息
+        delayTaskMessageProducer.sendMsg(delayTaskDO);
+        //4.更新任务状态
+        delayTaskDO.setStatus(DelayTaskStatusEnum.SENDING.getCode());
+
+
+        return false;
     }
 
     /**

@@ -192,4 +192,14 @@
         is_valid = #{isValid,jdbcType=TINYINT}
         where delay_task_id = #{delayTaskId,jdbcType=VARCHAR}
     </update>
+
+    <update id="updateStatus" parameterType="com.caisl.dt.common.dataobject.DelayTaskDO" >
+        update delay_task
+        set
+        status = #{status,jdbcType=TINYINT},
+        op_time = #{opTime,jdbcType=BIGINT},
+        last_ver = last_ver + 1
+        where delay_task_id = #{delayTaskId,jdbcType=VARCHAR}
+        AND   last_ver = #{lastVer,jdbcType=INTEGER}
+    </update>
 </mapper>

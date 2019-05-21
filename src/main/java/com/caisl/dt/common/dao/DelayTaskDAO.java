@@ -30,7 +30,24 @@ public class DelayTaskDAO {
         return delayTaskMapper.insert(record);
     }
 
+    /**
+     * 通过条件查询
+     *
+     * @param query
+     * @return
+     */
     public List<DelayTaskDO> queryListByQuery(DelayTaskQuery query){
         return delayTaskMapper.queryListByQuery(query);
     }
+
+    /**
+     * 根据主键查询
+     *
+     * @param delayTaskId
+     * @return
+     */
+    public DelayTaskDO selectByPrimaryKey(Long delayTaskId){
+        return delayTaskMapper.selectByPrimaryKey(delayTaskId);
+    }
+
 }

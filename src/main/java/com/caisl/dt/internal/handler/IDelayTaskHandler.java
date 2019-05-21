@@ -1,5 +1,7 @@
 package com.caisl.dt.internal.handler;
 
+import com.caisl.dt.domain.DelayTaskMessage;
+
 /**
  * IDelayTaskHandler
  *
@@ -14,6 +16,12 @@ public interface IDelayTaskHandler {
      */
     boolean loadTask();
 
+    /**
+     * 处理任务
+     *
+     * @return
+     */
+    boolean dealTask(DelayTaskMessage delayTaskMessage);
 
 
 }

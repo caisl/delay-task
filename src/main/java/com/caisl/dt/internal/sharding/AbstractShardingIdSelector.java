@@ -23,8 +23,8 @@ public abstract class AbstractShardingIdSelector implements ShardingIdSelector {
     private ShardingItemHelper shardingItemHelper;
 
     @Override
-    public Integer select() {
-        List<Integer> shardingIds = shardingItemHelper.getShardingIds();
+    public Integer select(boolean isLocalNode) {
+        List<Integer> shardingIds = shardingItemHelper.getShardingIds(isLocalNode);
         if (CollectionUtils.isEmpty(shardingIds)) {
             return null;
         }

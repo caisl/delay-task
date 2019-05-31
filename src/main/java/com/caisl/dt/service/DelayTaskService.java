@@ -42,11 +42,11 @@ public class DelayTaskService implements IDelayTaskService {
         //2.任务触发时间是否大于调度任务启动间隔时间
         if (addDelayTaskDTO.getTimeUnit().toMinutes(addDelayTaskDTO.getDelayTime()) <= 5) {
             //直接调度到队列中，任务状态为LOAD
-            delayTaskDO = buildDelayTaskDO(addDelayTaskDTO, DelayTaskStatusEnum.LOAD);
+            delayTaskDO = buildDelayTaskDO(addDelayTaskDTO, DelayTaskStatusEnum.LOAD, Boolean.TRUE);
             delayTaskQueue.add(buildDelayTaskMessage(delayTaskDO));
         } else {
             //任务状态为INIT
-            delayTaskDO = buildDelayTaskDO(addDelayTaskDTO, DelayTaskStatusEnum.INIT);
+            delayTaskDO = buildDelayTaskDO(addDelayTaskDTO, DelayTaskStatusEnum.INIT, Boolean.FALSE);
         }
         //3.任务持久化
         if (delayTaskDAO.insert(delayTaskDO) <= 0) {
@@ -80,7 +80,8 @@ public class DelayTaskService implements IDelayTaskService {
      * @param statusEnum
      * @return
      */
-    private DelayTaskDO buildDelayTaskDO(AddDelayTaskDTO addDelayTaskDTO, DelayTaskStatusEnum statusEnum) {
+    private DelayTaskDO buildDelayTaskDO(AddDelayTaskDTO addDelayTaskDTO, DelayTaskStatusEnum statusEnum, boolean
+                                         isLocalNode) {
         DelayTaskDO delayTaskDO = DelayTaskDO.builder()
                 .delayTaskId(UniqueIdUtil.nextId())
                 .triggerTime(getTriggerTimeMillis(addDelayTaskDTO.getDelayTime(), addDelayTaskDTO.getTimeUnit()))
@@ -89,7 +90,7 @@ public class DelayTaskService implements IDelayTaskService {
                 .status(statusEnum.getCode())
                 .tag(addDelayTaskDTO.getTag())
                 .topic(addDelayTaskDTO.getTopic())
-                .shardingId(getShardingId()).build();
+                .shardingId(getShardingId(isLocalNode)).build();
         return delayTaskDO;
     }
 
@@ -98,8 +99,8 @@ public class DelayTaskService implements IDelayTaskService {
      *
      * @return
      */
-    private Integer getShardingId() {
-        return Convert.asInt(randomSelector.select());
+    private Integer getShardingId(boolean isLocalNode) {
+        return Convert.asInt(randomSelector.select(isLocalNode));
     }
 
     /**

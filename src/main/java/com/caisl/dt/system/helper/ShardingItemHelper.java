@@ -9,6 +9,7 @@ import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.*;
 
@@ -25,14 +26,18 @@ public class ShardingItemHelper {
     private static final String KEY_VALUE_DELIMITER = "=";
 
     @Resource
-    private ZookeeperRegistryCenter regCenter;
+    private ZookeeperRegistryCenter zookeeperRegistryCenter;
 
     @Resource
     private DelayTaskLoadConfig delayTaskLoadConfig;
 
 
-    private final ShardingService shardingService = new ShardingService(regCenter, delayTaskLoadConfig.getDelayTaskLoadJobName());
+    private static ShardingService shardingService;
 
+    @PostConstruct
+    public void init() {
+        shardingService = new ShardingService(zookeeperRegistryCenter, delayTaskLoadConfig.getDelayTaskLoadJobName());
+    }
 
     /**
      * 获取分片ID集合

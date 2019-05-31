@@ -12,5 +12,5 @@ public interface ShardingIdSelector {
      *
      * @return
      */
-    Integer select();
+    Integer select(boolean isLocalNode);
 }

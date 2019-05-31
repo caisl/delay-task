@@ -19,11 +19,11 @@
         delay_task_id, sharding_id, topic, tag, params, trigger_time, status, extend_field,
         create_time, op_time, last_ver, is_valid
     </sql>
-    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
         select
         <include refid="Base_Column_List" />
         from delay_task
-        where delay_task_id = #{delayTaskId,jdbcType=VARCHAR}
+        where delay_task_id = #{delayTaskId,jdbcType=BIGINT}
     </select>
     <select id="queryListByQuery" resultMap="BaseResultMap"
             parameterType="com.caisl.dt.common.query.DelayTaskQuery">
@@ -37,7 +37,7 @@
                  separator="," open="(" close=")">
             #{item,jdbcType=TINYINT}
         </foreach>
-        AND status = 1
+        AND status in (1,2)
         AND is_valid = 1
         AND delay_task_id >= #{beginId,jdbcType=BIGINT}
         limit #{pageSize}

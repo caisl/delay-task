@@ -43,7 +43,7 @@
 
 ### 3.1 整体架构
 
-![整体架构](https://github.com/caisl/delay-task/blob/master/delay-task/src/document/image/整体架构.jpg)
+![整体架构](https://github.com/caisl/delay-task/blob/master/src/document/image/整体架构.jpg)
 
 
 **业务调用方**
@@ -91,7 +91,7 @@
 
 ### 3.2 数据库设计
 
-![数据库](https://github.com/caisl/delay-task/blob/master/delay-task/src/document/image/ER.jpg)
+![数据库](https://github.com/caisl/delay-task/blob/master/src/document/image/ER.jpg)
 ```
 CREATE TABLE `delay_task` (
   `delay_task_id` varchar(32) NOT NULL COMMENT '任务ID',
@@ -150,7 +150,7 @@ delay-task目前属于本地工程，后续可以做分布式，拆分为client�
 解决方案：
 应用部署成功之后重新触发一次调度任务，让主节点进行数据分片
 
-4.任务重复加载到延迟队列中
+3.任务重复加载到延迟队列中
 <br>为什么会出现?：
 - 服务重启过程加载作业在另外一台服务器触发调度，数据重新分片，重启成功的服务器而后又重新调用了加载任务，数据重新分片，导致任务重复加载。
 <br>解决方案：

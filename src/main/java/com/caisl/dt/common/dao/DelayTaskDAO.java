@@ -50,4 +50,22 @@ public class DelayTaskDAO {
         return delayTaskMapper.selectByPrimaryKey(delayTaskId);
     }
 
+    /**
+     * 更新任务状态
+     *
+     * @param record
+     * @return
+     */
+    public int updateStatus(DelayTaskDO record){
+        return delayTaskMapper.updateStatus(record);
+    }
+    /**
+     * 更新任务状态
+     *
+     * @param records
+     * @return
+     */
+    public int updateStatusBatch(List<DelayTaskDO> records){
+        return delayTaskMapper.updateStatusBatch(records);
+    }
 }

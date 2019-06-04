@@ -38,4 +38,8 @@ public enum DelayTaskQueue {
     public DelayTaskMessage take() throws InterruptedException {
         return queue.take();
     }
+
+    public boolean isEmpty(){
+        return queue.isEmpty();
+    }
 }

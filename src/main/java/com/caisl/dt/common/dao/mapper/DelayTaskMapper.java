@@ -3,6 +3,7 @@ package com.caisl.dt.common.dao.mapper;
 import com.caisl.dt.common.dataobject.DelayTaskDO;
 import com.caisl.dt.common.query.DelayTaskQuery;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -30,5 +31,9 @@ public interface DelayTaskMapper {
     int updateByPrimaryKey(DelayTaskDO record);
 
     int updateStatus(DelayTaskDO record);
+
+    int updateStatusBatch(@Param("list") List<DelayTaskDO> list);
+
+
 
 }

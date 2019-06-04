@@ -68,9 +68,11 @@ public class DelayTaskHandler implements IDelayTaskHandler {
                         beginId = delayTaskDO.getDelayTaskId();
                     }
                     delayTaskQueue.add(DelayTaskMessage.builder().delayTaskId(delayTaskDO.getDelayTaskId()).triggerTime(delayTaskDO.getTriggerTime()).build());
+                    delayTaskDO.setStatus(DelayTaskStatusEnum.LOAD.getCode());
+                    delayTaskDO.setOpTime(System.currentTimeMillis());
                 }
-                //更新状态
-
+                //批量更新状态
+                delayTaskDAO.updateStatusBatch(delayTaskDOS);
             } catch (Exception e) {
                 LogUtil.log(DelayTaskLoggerFactory.BUSINESS, DelayTaskLoggerMarker.JOB, Level.ERROR, "loadTask error", e);
             } finally {
@@ -88,16 +90,22 @@ public class DelayTaskHandler implements IDelayTaskHandler {
         if(delayTaskDO == null){
             return false;
         }
-        //2.检验任务状态
-        if(delayTaskDO.getStatus() != DelayTaskStatusEnum.INIT.getCode()){
+        //2.检验任务
+        if(delayTaskDO.getStatus() != DelayTaskStatusEnum.LOAD.getCode()){
             return true;
         }
-        //3.发送MQ消息
-        delayTaskMessageProducer.sendMsg(delayTaskDO);
-        //4.更新任务状态
+        //任务是否属于该台服务器处理
+        if(!shardingItemHelper.getLocalShardingIds().contains(delayTaskDO.getShardingId())){
+            //logger
+            return true;
+        }
+        //3.更新任务状态，MVCC乐观锁控制，保证任务不重复处理
         delayTaskDO.setStatus(DelayTaskStatusEnum.SENDING.getCode());
-
-
+        delayTaskDO.setOpTime(System.currentTimeMillis());
+        if(delayTaskDAO.updateStatus(delayTaskDO) > 0) {
+            //4.发送MQ消息
+            delayTaskMessageProducer.sendMsg(delayTaskDO);
+        }
         return false;
     }
 

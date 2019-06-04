@@ -42,7 +42,7 @@ public class DelayTaskService implements IDelayTaskService {
         //2.任务触发时间是否大于调度任务启动间隔时间
         if (addDelayTaskDTO.getTimeUnit().toMinutes(addDelayTaskDTO.getDelayTime()) <= 5) {
             //直接调度到队列中，任务状态为LOAD
-            delayTaskDO = buildDelayTaskDO(addDelayTaskDTO, DelayTaskStatusEnum.LOAD, Boolean.TRUE);
+            delayTaskDO = buildDelayTaskDO(addDelayTaskDTO, DelayTaskStatusEnum.INIT, Boolean.TRUE);
             delayTaskQueue.add(buildDelayTaskMessage(delayTaskDO));
         } else {
             //任务状态为INIT

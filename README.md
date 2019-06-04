@@ -8,7 +8,7 @@
 - 红包过期前两天短信通知，下午16:00发送
 - 等等定时任务处理业务。
 
-采用的技术方案是定时任务扫数据汇总表，分页读取一定数量然后处理
+针对以上场景采用的技术方案是定时任务扫数据汇总表，分页读取一定数量然后处理<br>
 然而随着业务的发展，业务多元化，遇到了以下场景：
 - 拼团砍价活动过期前半小时提醒
 - 订单提交半小时内没有完成支付，订单自动取消，库存退还
@@ -94,12 +94,12 @@
 ![数据库](https://github.com/caisl/delay-task/blob/master/src/document/image/ER.jpg)
 ```
 CREATE TABLE `delay_task` (
-  `delay_task_id` varchar(32) NOT NULL COMMENT '任务ID',
+  `delay_task_id` bigint(20) NOT NULL COMMENT '任务ID',
   `sharding_id` tinyint(4) NOT NULL COMMENT '分片ID',
   `topic` varchar(100) NOT NULL COMMENT '消息topic',
   `tag` varchar(100) NOT NULL COMMENT '消息tag',
   `params` varchar(1000) NOT NULL COMMENT '参数',
-  `trigger_time` bigint(19) NOT NULL COMMENT '执行时间',
+  `trigger_time` bigint(20) NOT NULL COMMENT '执行时间',
   `status` tinyint(4) NOT NULL COMMENT '任务状态：1.初始化 2.任务已加载 3.消息已发放 4.业务处理成功 5.业务处理失败',
   `extend_field` varchar(100) NOT NULL COMMENT '扩展属性',
   `create_time` bigint(20) NOT NULL COMMENT '创建时间',

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>   
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.caisl.dt.common.dao.mapper.DelayTaskClockMapper">
+
+    <!-- 创建数据库与实体类字段对应关系 -->
+    <resultMap id="BaseResultMap" type="com.caisl.dt.common.dataobject.DelayTaskClockDO">
+				<id column="id" property="id"/>
+				<result column="task_trigger_time" property="taskTriggerTime"/>
+				<result column="clock_status" property="clockStatus"/>
+				<result column="gmt_create" property="gmtCreate"/>
+				<result column="gmt_update" property="gmtUpdate"/>
+				<result column="last_ver" property="lastVer"/>
+				<result column="is_valid" property="isValid"/>
+    </resultMap>
+
+    <!-- 公共基础SQL -->
+    <sql id="Base_Column_List">
+			id ,
+			task_trigger_time ,
+			clock_status ,
+			gmt_create ,
+			gmt_update ,
+			last_ver ,
+			is_valid 
+    </sql>
+	<select id="queryListByQuery" resultMap="BaseResultMap"
+			parameterType="com.caisl.dt.common.query.DelayTaskClockQuery">
+		select
+		<include refid="Base_Column_List"/>
+		from delay_task_clock
+		where task_trigger_time <![CDATA[ < ]]> #{taskTriggerTime,jdbcType=BIGINT}
+		AND task_trigger_time <![CDATA[ > ]]> #{compensateTime,jdbcType=BIGINT}
+		AND clock_status IN
+		<foreach collection="clockStatusList" index="index" item="item"
+				 separator="," open="(" close=")">
+			#{item,jdbcType=TINYINT}
+		</foreach>
+		AND is_valid = 1
+		<if test="beginId != null">
+		AND id >= #{beginId,jdbcType=BIGINT}
+		</if>
+		order by id
+		<if test="pageSize != null">
+		limit #{pageSize}
+		</if>
+	</select>
+
+
+    <select id="get" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from delay_task_clock
+        where id=#{id}
+        and is_valid = 1
+    </select>
+
+	<select id="queryByClockTriggerTime" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from delay_task_clock
+        where task_trigger_time=#{clocktTriggerTime}
+        and is_valid = 1
+    </select>
+
+    <!-- 新增 -->
+    <insert id="insert" parameterType="com.caisl.dt.common.dataobject.DelayTaskClockDO">
+        insert into delay_task_clock(
+        	<include refid="Base_Column_List"/>
+        ) values(
+			#{id} ,
+			#{taskTriggerTime} ,
+			#{clockStatus} ,
+		     UNIX_TIMESTAMP(NOW(3)) * 1000 ,
+		     UNIX_TIMESTAMP(NOW(3)) * 1000 ,
+			#{lastVer} ,
+			#{isValid} 
+        )
+    </insert>
+
+	<!-- 修改 -->
+    <update id="update" parameterType="com.caisl.dt.common.dataobject.DelayTaskClockDO">
+        update
+			delay_task_clock
+        <set>
+				<if test="taskTriggerTime != null">
+				task_trigger_time = #{taskTriggerTime},
+				</if>
+				<if test="clockStatus != null">
+				clock_status = #{clockStatus},
+				</if>
+				<if test="isValid != null">
+				is_valid = #{isValid},
+				</if>
+            last_ver = last_ver + 1,
+            gmt_update = UNIX_TIMESTAMP(NOW(3)) * 1000
+		</set>
+        where id=#{id} and is_valid = 1
+    </update>
+
+    <!-- 软删除实体 -->
+    <update id="delete" parameterType="java.lang.Long">
+        update delay_task_clock
+        set is_valid = 0
+        where id=#{id}
+    </update>
+
+
+	<update id="updateStatusBatch" parameterType="java.util.List">
+		update delay_task_clock
+		<trim prefix="set" suffixOverrides=",">
+			<trim prefix="clock_status =case" suffix="end,">
+				<foreach collection="list" item="i" index="index">
+					<if test="i.clockStatus!=null">
+						when id=#{i.id} AND last_ver = #{i.lastVer} then #{i.clockStatus}
+					</if>
+				</foreach>
+			</trim>
+			<trim prefix="gmt_update =case" suffix="end,">
+				<foreach collection="list" item="i" index="index">
+						when id=#{i.id} AND last_ver = #{i.lastVer} then UNIX_TIMESTAMP(NOW(3)) * 1000
+				</foreach>
+			</trim>
+			<trim prefix="last_ver =case" suffix="end,">
+				<foreach collection="list" item="i" index="index">
+					<if test="i.lastVer!=null">
+						when id=#{i.id} AND last_ver = #{i.lastVer} then last_ver + 1
+					</if>
+				</foreach>
+			</trim>
+		</trim>
+		<where>
+			<foreach collection="list" item="i" open="( " separator=") or (" close=" )">
+				id=#{i.id} AND last_ver = #{i.lastVer}
+			</foreach>
+		</where>
+
+	</update>
+
+</mapper>   

@@ -18,5 +18,10 @@ public class DelayTaskLoggerMarker {
     public static final Marker BUSINESS = MarkerFactory.getMarker("business");
 
     public static final Marker DELAY_TASK_MSG = MarkerFactory.getMarker("delay_task_message");
+
+    public static final Marker DELAY_TASK_OPERATE = MarkerFactory.getMarker("delay_task_operate");
+
+    public static final Marker DELAY_TASK_CLOCK = MarkerFactory.getMarker("delay_task_clock");
+
     public static final Marker JOB = MarkerFactory.getMarker("job");
 }

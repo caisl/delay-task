@@ -9,18 +9,18 @@ package com.caisl.dt.common.constant;
 public enum ResultCodeEnum {
     REQUEST_SUCCESS("1", "request success"),
     REQUEST_FAIL("0", "request fail"),
+
     SYSTEM_ERROR("10000", "系统内部异常"),
     PARAM_ERROR("10001", "参数不合法"),
     RULE_PARAM_ERROR("10002", "规则参数不合法"),
 
 
-
-
     INSERT_TASK_FAIL("20001", "插入任务失败"),
-    ACTIVITY_IS_WRONG("20002", "活动异常"),
-    RULE_CHECK_FAIL("20003", "规则检验不通过");
+    TASK_NOT_FIND("20002", "延迟任务不存在"),
+    DELAY_TASK_STATUS_ERROR("20003", "延迟任务状态异常"),
+    DELAY_TASK_HAS_EXECUTE("20004", "延迟任务已经执行"),
 
-
+    ;
     private String code;
     private String message;
 

@@ -24,4 +24,5 @@ public class DelayTaskLoggerFactory {
      * 消息日志
      */
     public final static Logger MQ = LoggerFactory.getLogger("MQ");
+
 }

@@ -2,12 +2,11 @@ mybatis:
   typeAliasesPackage: com.caisl.ap.common.dataobject
   mapperLocations: classpath:mapper/*.xml
 
-
 spring:
     datasource:
         name: delay-task
         driverClassName: com.mysql.jdbc.Driver
-        url: jdbc:mysql://127.0.0.1:3306/activity_platform?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&serverTimezone=UTC
+        url: jdbc:mysql://127.0.0.1:3306/delay_task?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&serverTimezone=UTC
         username: root
         password: root
 

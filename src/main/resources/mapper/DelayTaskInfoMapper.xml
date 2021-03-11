@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.caisl.dt.common.dao.mapper.DelayTaskInfoMapper">
+
+    <!-- 创建数据库与实体类字段对应关系 -->
+    <resultMap id="BaseResultMap" type="com.caisl.dt.common.dataobject.DelayTaskInfoDO">
+        <id column="id" property="id"/>
+        <result column="app_name" property="appName"/>
+        <result column="topic" property="topic"/>
+        <result column="producer_group_id" property="producerGroupId"/>
+        <result column="tag" property="tag"/>
+        <result column="params" property="params"/>
+        <result column="task_trigger_time" property="taskTriggerTime"/>
+        <result column="task_status" property="taskStatus"/>
+        <result column="msg_id" property="msgId"/>
+        <result column="extend_field" property="extendField"/>
+        <result column="gmt_create" property="gmtCreate"/>
+        <result column="gmt_update" property="gmtUpdate"/>
+        <result column="last_ver" property="lastVer"/>
+        <result column="is_valid" property="isValid"/>
+    </resultMap>
+
+    <!-- 公共基础SQL -->
+    <sql id="Base_Column_List">
+			id ,
+			app_name ,
+			topic ,
+			producer_group_id ,
+			tag ,
+			params ,
+			task_trigger_time ,
+			task_status ,
+			msg_id ,
+			extend_field ,
+			gmt_create ,
+			gmt_update ,
+			last_ver ,
+			is_valid 
+    </sql>
+
+    <select id="get" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from delay_task_info
+        where id=#{id}
+        and is_valid = 1
+    </select>
+
+    <select id="queryByCondition" resultMap="BaseResultMap" parameterType="com.caisl.dt.common.query.DelayTaskInfoQuery">
+        select
+        <include refid="Base_Column_List"/>
+        from delay_task_info
+        where task_trigger_time = #{taskTriggerTime}
+        and task_status = #{taskStatus}
+        and mod(id,#{total}) = #{index}
+        and is_valid = 1
+    </select>
+
+    <!-- 新增 -->
+    <insert id="insert" parameterType="com.caisl.dt.common.dataobject.DelayTaskInfoDO">
+        insert into delay_task_info(
+        <include refid="Base_Column_List"/>
+        ) values(
+        #{id} ,
+        #{appName} ,
+        #{topic} ,
+        #{producerGroupId} ,
+        #{tag} ,
+        #{params} ,
+        #{taskTriggerTime} ,
+        #{taskStatus} ,
+        #{msgId} ,
+        #{extendField} ,
+        UNIX_TIMESTAMP(NOW(3)) * 1000 ,
+        UNIX_TIMESTAMP(NOW(3)) * 1000 ,
+        #{lastVer} ,
+        #{isValid}
+        )
+    </insert>
+
+    <!-- 修改 -->
+    <update id="update" parameterType="com.caisl.dt.common.dataobject.DelayTaskInfoDO">
+        update
+        delay_task_info
+        <set>
+            <if test="appName != null">
+                app_name = #{appName},
+            </if>
+            <if test="topic != null">
+                topic = #{topic},
+            </if>
+            <if test="tag != null">
+                tag = #{tag},
+            </if>
+            <if test="params != null">
+                params = #{params},
+            </if>
+            <if test="taskTriggerTime != null">
+                task_trigger_time = #{taskTriggerTime},
+            </if>
+            <if test="taskStatus != null">
+                task_status = #{taskStatus},
+            </if>
+            <if test="msgId != null">
+                msg_id = #{msgId},
+            </if>
+            <if test="extendField != null">
+                extend_field = #{extendField},
+            </if>
+            <if test="gmtCreate != null">
+                gmt_create = #{gmtCreate},
+            </if>
+            <if test="isValid != null">
+                is_valid = #{isValid},
+            </if>
+            gmt_update = UNIX_TIMESTAMP(NOW(3)) * 1000,
+            last_ver = last_ver + 1
+        </set>
+        where id=#{id} and is_valid = 1
+    </update>
+
+    <!-- 软删除实体 -->
+    <update id="delete" parameterType="java.lang.Long">
+        update delay_task_info
+        set is_valid = 0
+        where id=#{id}
+    </update>
+
+</mapper>   

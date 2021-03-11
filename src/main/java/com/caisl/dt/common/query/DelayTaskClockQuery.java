@@ -1,32 +1,29 @@
 package com.caisl.dt.common.query;
 
+
 import lombok.Builder;
 import lombok.Data;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
- * DelayTaskQuery
+ * DelayTaskClockQuery
  *
  * @author caisl
- * @since 2019-05-17
+ * @since 2021/3/02
  */
 @Data
 @Builder
-public class DelayTaskQuery implements Serializable {
+public class DelayTaskClockQuery {
     /**
      * 查询开始ID，用于减少遍历数据量
      */
     private Long beginId;
-    /**
-     * 分片ID
-     */
-    private List<Integer> shardingIds;
+
     /**
      * 任务触发时间
      */
-    private Long triggerTime;
+    private Long taskTriggerTime;
 
     /**
      * 任务补偿时间
@@ -36,4 +33,6 @@ public class DelayTaskQuery implements Serializable {
      * 分页数据大小
      */
     private Integer pageSize;
+
+    private List<Integer> clockStatusList;
 }

@@ -1,28 +1,26 @@
 package com.caisl.dt.common.constant;
 
 /**
- *
+ * DelayTaskClockStatusEnum
  *
  * @author caisl
  * @since 2021/3/02
  */
-public enum DelayTaskStatusEnum {
-    INIT(1, "初始化"),
-    SEND(2, "消息已发放"),
-    SUCCESS(3, "业务处理成功"),
-    FAIL(4, "业务处理失败"),
-    CANCEL(5, "业务取消");
-
+public enum DelayTaskClockStatusEnum {
+    PREPARE(1, "初始化"),
+    LOAD(2, "任务已加载"),
+    EXECUTE(3, "已执行"),
+    EXPIRE_EXECUTE(4, "过期执行");
     private Integer status;
     private String desc;
 
-    DelayTaskStatusEnum(Integer status, String desc) {
+    DelayTaskClockStatusEnum(Integer status, String desc) {
         this.status = status;
         this.desc = desc;
     }
 
-    public static DelayTaskStatusEnum getByStatus(Integer status) {
-        for (DelayTaskStatusEnum taskStatusEnums : values()) {
+    public static DelayTaskClockStatusEnum getByStatus(Integer status) {
+        for (DelayTaskClockStatusEnum taskStatusEnums : values()) {
             if (taskStatusEnums.getStatus().equals(status)) {
                 return taskStatusEnums;
             }

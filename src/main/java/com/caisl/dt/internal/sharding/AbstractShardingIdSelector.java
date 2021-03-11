@@ -1,11 +1,6 @@
 package com.caisl.dt.internal.sharding;
 
-import com.caisl.dt.job.DelayTaskLoadJob;
 import com.caisl.dt.system.helper.ShardingItemHelper;
-import com.dangdang.ddframe.job.lite.lifecycle.api.JobAPIFactory;
-import com.dangdang.ddframe.job.lite.lifecycle.api.JobOperateAPI;
-import com.dangdang.ddframe.job.lite.lifecycle.api.JobSettingsAPI;
-import com.google.common.base.Optional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
@@ -24,14 +19,7 @@ public abstract class AbstractShardingIdSelector implements ShardingIdSelector {
 
     @Override
     public Integer select(boolean isLocalNode) {
-        List<Integer> shardingIds = shardingItemHelper.getShardingIds(isLocalNode);
-        if (CollectionUtils.isEmpty(shardingIds)) {
-            return null;
-        }
-        if (shardingIds.size() == 0) {
-            return shardingIds.get(0);
-        }
-        return doSelect(shardingIds);
+        return 0;
     }
 
     /**

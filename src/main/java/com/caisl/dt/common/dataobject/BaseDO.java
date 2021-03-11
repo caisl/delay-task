@@ -5,13 +5,18 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * Base
+ * BaseDO
  *
  * @author caisl
  * @since 2019-03-12
  */
 @Data
 public abstract class BaseDO implements Serializable {
+    private static final long serialVersionUID = 4567582374248772921L;
+    /**
+     * 主键
+     */
+    private Long id;
     /**
      * 是否有效
      */
@@ -25,11 +30,11 @@ public abstract class BaseDO implements Serializable {
     /**
      * 创建时间
      */
-    private Long createTime = System.currentTimeMillis();
+    private Long gmtCreate = System.currentTimeMillis();
 
     /**
      * 更新时间
      */
-    private Long opTime = System.currentTimeMillis();
+    private Long gmtUpdate = System.currentTimeMillis();
 
 }

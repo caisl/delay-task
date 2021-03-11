@@ -1,7 +1,7 @@
 package com.caisl.dt.mq.producer;
 
 import ch.qos.logback.classic.Level;
-import com.caisl.dt.common.dataobject.DelayTaskDO;
+import com.caisl.dt.common.dataobject.DelayTaskInfoDO;
 import com.caisl.dt.system.logger.DelayTaskLoggerFactory;
 import com.caisl.dt.system.logger.DelayTaskLoggerMarker;
 import com.caisl.dt.system.util.LogUtil;
@@ -18,13 +18,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class DelayTaskMessageProducer {
 
-    public String sendMsg(DelayTaskDO delayTaskDO) {
-        String msgId = StringUtils.EMPTY;
+    public String sendMsg(DelayTaskInfoDO delayTaskInfoDO) {
+        //组装消息体
+
+
         //TODO 具体消息生成由各公司自行封装的MQ框架实现
-        LogUtil.log(DelayTaskLoggerFactory.MQ, DelayTaskLoggerMarker.DELAY_TASK_MSG, Level.INFO, LogUtil.formatLog(KVJsonFormat.title("sendMsg")
-                .add("topic", delayTaskDO.getTopic())
-                .add("tag", delayTaskDO.getTag())
-                .add("delayTaskId", delayTaskDO.getDelayTaskId())));
+        String msgId = StringUtils.EMPTY;
+
+        LogUtil.log(DelayTaskLoggerFactory.MQ, DelayTaskLoggerMarker.DELAY_TASK_MSG, Level.INFO, LogUtil.formatLog(KVJsonFormat.title("sendMsg success")
+                .add("msgId", msgId)
+                .add("topic", delayTaskInfoDO.getTopic())
+                .add("tag", delayTaskInfoDO.getTag())
+                .add("delayTaskId", delayTaskInfoDO.getId())
+                .add("timeLoss", System.currentTimeMillis() - delayTaskInfoDO.getTaskTriggerTime())));
         return msgId;
     }
 }
